@@ -5,23 +5,37 @@
 
 int main()
 {
-    // 初始化相机、yolo类
-    
-    // while (1) {
-        // 调用相机读取图像
+    try {
+        // 初始化相机
+        myCamera camera;
 
+        // 初始化yolo类（传入配置文件路径）
+        YoloDetector yolo("./configs/yolo.yaml");
 
-        // 调用yolo识别装甲板
+        while (true) {
+            // 读取图像
+            cv::Mat img = camera.read();
 
+            // YOLO识别装甲板
+            std::vector<Armor> armors = yolo.detect(img);
 
+            // 画红色矩形
+            for (auto& armor : armors) {
+                draw_points(img, armor.pts, cv::Scalar(0, 0, 255));  // 红色
+            }
 
-        // 显示图像
-        // cv::resize(img, img , cv::Size(640, 480));
-        // cv::imshow("img", img);
-        // if (cv::waitKey(0) == 'q') {
-        //     // break;
-        // }
-    // }
+            // 显示图像
+            cv::resize(img, img , cv::Size(640, 480));
+            cv::imshow("img", img);
+            if (cv::waitKey(1) == 'q') {
+                break;
+            }
+        }
+    }
+    catch (std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return -1;
+    }
 
     return 0;
 }
